@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parnas Hotel Collection Special Offer</title>
+
+<style>
+  /* =========================================================
+     기본 폰트 & 레이아웃
+  ========================================================= */
+  body {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #F7F7F7;
+    display: flex;
+    justify-content: center;
+  }
+
+  .page-wrapper {
+    max-width: 1000px;
+    width: 100%;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  }
+
+  .banner {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+
+  .banner img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  h2 {
+    margin-top: 45px;
+    font-size: 1.2em;
+    border-left: 3px solid #2c3e50;
+    padding-left: 10px;
+    color: #2c3e50;
+  }
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin: 16px 0 6px;
+  }
+  
+  label.required::after{
+    content: " *";
+    color: #d33;
+    font-weight: 700;
+    vertical-align: super;
+    font-size: 0.85em;
+  }
+
+  /* =========================================================
+     입력 폼 스타일
+  ========================================================= */
+  input[type="text"], input[type="number"]{
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+  }
+  input:focus {
+    border-bottom: 1px solid #2c3e50;
+    outline: none;
+  }
+
+  select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cfd6dd;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #2c3e50;
+  }
+
+  /* =========================================================
+     [핵심] 카테고리 & 가로 스크롤 상품 리스트
+  ========================================================= */
+  .category-section {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+
+  .category-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .product-list {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    scrollbar-width: none; /* 파이어폭스 스크롤바 숨김 */
+  }
+  .product-list::-webkit-scrollbar { display: none; }
+
+  .product-card {
+    min-width: 180px;
+    max-width: 180px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s;
+  }
+  .product-card:hover { transform: translateY(-3px); }
+  
+  /* 선택된 상품 강조 */
+  .product-card.active .img-container {
+    border: 3px solid #2c3e50;
+  }
+
+  .img-container {
+    width: 100%;
+    height: 180px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 3px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-card-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.3;
+    word-break: keep-all;
+    margin-bottom: 4px;
+  }
+
+  .product-card-price {
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  /* =========================================================
+     상세 정보 영역 (클릭 시 열림)
+  ========================================================= */
+  .detail-container {
+    display: none; /* 기본 숨김 */
+    background: #fdfdfd;
+    border: 1px solid #e4e9ef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-img {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .detail-info-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+
+  .detail-desc {
+    background: #f7f9fb;
+    padding: 15px;
+    border-radius: 8px;
+    color: #556677;
+    line-height: 1.6;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+  }
+
+  .detail-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  /* 수량 스텝퍼 */
+  .qty-area { margin-top: 20px; }
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .qty-stepper input {
+    width: 60px;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 1.1em;
+  }
+  .qty-btn {
+    width: 36px; height: 36px;
+    border: 1px solid #cfd6dd;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .qty-btn:hover { border-color: #2c3e50; }
+
+  /* 장바구니/선택완료 버튼 */
+  .btn-select-done {
+    width: 100%;
+    padding: 12px;
+    background: #f0f4f8;
+    color: #2c3e50;
+    border: 1px solid #cfd6dd;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-select-done:hover { background: #e4e9ef; }
+
+  /* =========================================================
+     안내 및 총액 영역
+  ========================================================= */
+  .total-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .selected-items-preview {
+      font-size: 0.75em;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 4px;
+  }
+
+  .info-box, .consent-box { border: 1px solid #cfd6dd; border-radius: 10px; padding: 16px; margin: 18px 0; }
+  .hidden { display: none !important; }
+  button[type="submit"] { width: 100%; padding: 16px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; margin-top: 35px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
+</style>
+</head>
+
+<body>
+<div class="page-wrapper">
+
+  <div class="banner">
+    <img src="./assets/header_re2.png" alt="Parnas Hotel Collection" onerror="this.src='https://via.placeholder.com/1000x300?text=Banner'">
+  </div>
+
+  <div class="info-box">
+    <h3 style="text-align:center; margin-top:0;">Parnas Hotel Collection Special Offer</h3>
+    <p style="text-align:center; color:#556677; font-size:0.9em;">- 2026.12.31 까지 | 문의: newbiz@parnas.co.kr</p>
+  </div>
+
+  <form id="orderForm" onsubmit="return validateForm();">
+    <h2>1. 주문자 정보</h2>
+    <label class="required">주문자 이름</label>
+    <input type="text" name="주문자 이름" required>
+
+    <label class="required">회사 이메일 주소</label>
+    <input type="text" name="회사 이메일 주소" required>
+
+    <h2>2. 구매 상품 선택</h2>
+    
+    <div id="productGalleryArea"></div>
+
+    <div class="total-box">
+      <div>
+          <div>총 결제 금액</div>
+          <div id="selectedItemsText" class="selected-items-preview">선택된 상품이 없습니다.</div>
+      </div>
+      <div><strong id="grandTotal">0</strong>원</div>
+    </div>
+
+    <h2>3. 배송 정보</h2>
+    <label class="required">수취인 이름</label>
+    <input type="text" name="수취인 이름" required>
+
+    <label class="required">수취인 전화번호</label>
+    <input type="text" class="phone-input" required>
+
+    <label class="required">수취인 주소</label>
+    <input type="text" name="수취인 주소" required>
+
+    <h2>4. 결제 방식</h2>
+    <label class="required">결제 방식 선택</label>
+    <select name="결제 방식" id="paySelect" required>
+      <option value="">선택</option>
+      <option value="계좌이체">계좌이체</option>
+      <option value="카드결제">카드결제</option>
+    </select>
+
+    <div id="bankArea" class="hidden" style="margin-top:10px; background:#f7f9fb; padding:15px; border-radius:8px;">
+      <p><strong>입금 계좌:</strong> 하나은행 183-910001-24105</p>
+      <label class="required">입금자명</label>
+      <input type="text" name="입금자명">
+      <label class="required">입금 금액</label>
+      <input type="text" id="depositAmount">
+    </div>
+
+    <div id="cardArea" class="hidden" style="margin-top:10px; background:#f7f9fb; padding:15px; border-radius:8px;">
+      <label class="required">결제 링크 받으실 전화번호</label>
+      <input type="text" class="phone-input" name="카드결제 연락처">
+    </div>
+
+    <div class="consent-box">
+      <label><input type="checkbox" id="agreeAll" required> 개인정보 수집 및 제3자 제공에 동의합니다. (필수)</label>
+    </div>
+
+    <button type="submit">주문서 제출하기</button>
+  </form>
+</div>
+
+<div id="detailTemplate" class="detail-container">
+  <img id="dtlImg" class="detail-img" src="" alt="">
+  <div id="dtlTitle" class="detail-info-title">상품명</div>
+  <div id="dtlDesc" class="detail-desc">상품 설명</div>
+  
+  <div class="detail-price-row">
+    <span>단가</span>
+    <span id="dtlPrice">0원</span>
+  </div>
+
+  <div class="qty-area">
+    <label style="margin-top:0;">수량 선택</label>
+    <div class="qty-stepper">
+      <button type="button" class="qty-btn" id="dtlMinus">−</button>
+      <input type="number" id="dtlQty" min="0" value="0">
+      <button type="button" class="qty-btn" id="dtlPlus">＋</button>
+    </div>
+  </div>
+  
+  <button type="button" class="btn-select-done" id="dtlCloseBtn">확인 (목록으로)</button>
+</div>
+
+<script>
+// 기존 상품 데이터
+const products = [
+  { category:"Scent Line", name:"Mossy Wood 디퓨저", price:76000, img: "https://via.placeholder.com/400x300?text=Mossy+Wood+Diffuser", desc: "시그니처 우디 향" },
+  { category:"Scent Line", name:"Mossy Wood 캔들", price:74400, img: "https://via.placeholder.com/400x300?text=Mossy+Wood+Candle", desc: "시그니처 우디 캔들" },
+  { category:"Lifestyle Line (베딩)", name:"킹사이즈 구스다운 이불 세트", price:1487500, img: "https://via.placeholder.com/400x300?text=Duvet+K", desc: "폴란드산 구스 이불" },
+  { category:"Lifestyle Line (베딩)", name:"퀸사이즈 구스다운 이불 세트", price:1428000, img: "https://via.placeholder.com/400x300?text=Duvet+Q", desc: "폴란드산 구스 이불" },
+  { category:"Lifestyle Line (타월/로브)", name:"배스로브", price:157250, img: "https://via.placeholder.com/400x300?text=Bathrobe", desc: "이집트 기자 원면 로브" },
+  { category:"Lifestyle Line (타월/로브)", name:"배스 타월 2개입", price:97750, img: "https://via.placeholder.com/400x300?text=Bath+Towel", desc: "고급 코마사 타월" }
+  // 실제 데이터는 기존 배열 전체를 여기에 넣으시면 됩니다!
+];
+
+// 각 상품의 수량을 저장할 배열
+let productQuantities = new Array(products.length).fill(0);
+let currentActiveIndex = -1;
+
+/* ----- 1. 화면 렌더링 (카테고리별 가로 스크롤) ----- */
+const galleryArea = document.getElementById("productGalleryArea");
+const categories = [...new Set(products.map(p => p.category))]; // 중복 제거된 카테고리 목록
+
+categories.forEach((catName, catIndex) => {
+  // 1-1. 카테고리 섹션 생성
+  const section = document.createElement("div");
+  section.className = "category-section";
+  
+  // 1-2. 카테고리 제목
+  const title = document.createElement("div");
+  title.className = "category-title";
+  title.textContent = catName;
+  section.appendChild(title);
+  
+  // 1-3. 가로 스크롤 상품 리스트 생성
+  const list = document.createElement("div");
+  list.className = "product-list";
+  
+  // 해당 카테고리의 상품만 필터링해서 카드 생성
+  products.forEach((p, pIndex) => {
+    if(p.category === catName) {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.dataset.index = pIndex; // 원본 배열 인덱스 기억
+      
+      card.innerHTML = `
+        <div class="img-container">
+          <img src="${p.img}" alt="${p.name}">
+        </div>
+        <div class="product-card-title">${p.name}</div>
+        <div class="product-card-price">${p.price.toLocaleString()}원</div>
+      `;
+      
+      // 카드 클릭 이벤트
+      card.addEventListener("click", () => openDetailView(pIndex, section, card));
+      list.appendChild(card);
+    }
+  });
+  
+  section.appendChild(list);
+  
+  // 1-4. 이 카테고리에서 열릴 "상세 영역" 박스 (빈 껍데기)
+  const detailAnchor = document.createElement("div");
+  detailAnchor.className = "category-detail-anchor";
+  section.appendChild(detailAnchor);
+  
+  galleryArea.appendChild(section);
+});
+
+/* ----- 2. 상세 뷰 열기/닫기 로직 ----- */
+const detailTemplate = document.getElementById("detailTemplate");
+
+// 템플릿 내의 요소들 미리 찾아두기
+const dtlImg = document.getElementById("dtlImg");
+const dtlTitle = document.getElementById("dtlTitle");
+const dtlDesc = document.getElementById("dtlDesc");
+const dtlPrice = document.getElementById("dtlPrice");
+const dtlQty = document.getElementById("dtlQty");
+
+function openDetailView(index, sectionEl, cardEl) {
+  currentActiveIndex = index;
+  const p = products[index];
+  
+  // 모든 카드의 active 클래스 제거 후, 클릭된 카드만 추가
+  document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+  cardEl.classList.add('active');
+
+  // 데이터 바인딩
+  dtlImg.src = p.img;
+  dtlTitle.innerHTML = p.name;
+  dtlDesc.innerHTML = p.desc;
+  dtlPrice.innerText = p.price.toLocaleString() + "원";
+  dtlQty.value = productQuantities[index]; // 기존 선택 수량 불러오기
+
+  // 해당 카테고리의 anchor 영역으로 템플릿 이동 후 표시
+  const anchor = sectionEl.querySelector('.category-detail-anchor');
+  anchor.appendChild(detailTemplate);
+  detailTemplate.style.display = "block";
+  
+  // 부드럽게 스크롤 이동 (선택사항)
+  setTimeout(() => {
+    detailTemplate.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+// 닫기 버튼
+document.getElementById("dtlCloseBtn").addEventListener("click", () => {
+  detailTemplate.style.display = "none";
+  document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+});
+
+/* ----- 3. 수량 조절 및 총액 계산 ----- */
+function updateQuantity(newQty) {
+  if(newQty < 0) newQty = 0;
+  dtlQty.value = newQty;
+  productQuantities[currentActiveIndex] = newQty;
+  calculateTotal();
+}
+
+document.getElementById("dtlMinus").addEventListener("click", () => updateQuantity(parseInt(dtlQty.value) - 1));
+document.getElementById("dtlPlus").addEventListener("click", () => updateQuantity(parseInt(dtlQty.value) + 1));
+dtlQty.addEventListener("input", (e) => updateQuantity(parseInt(e.target.value) || 0));
+
+function calculateTotal() {
+  let total = 0;
+  let summaryTexts = [];
+  
+  productQuantities.forEach((qty, idx) => {
+    if(qty > 0) {
+      total += products[idx].price * qty;
+      summaryTexts.push(`${products[idx].name}(${qty}개)`);
+    }
+  });
+  
+  document.getElementById("grandTotal").innerText = total.toLocaleString();
+  
+  // 선택된 상품명 하단에 요약 표시
+  const summaryEl = document.getElementById("selectedItemsText");
+  if(summaryTexts.length > 0) {
+      summaryEl.innerText = summaryTexts.join(", ");
+  } else {
+      summaryEl.innerText = "선택된 상품이 없습니다.";
+  }
+}
+
+/* ----- 4. 결제 수단 토글 (기존 유지) ----- */
+document.getElementById("paySelect").addEventListener("change", (e) => {
+  const v = e.target.value;
+  document.getElementById("bankArea").classList.toggle("hidden", v !== "계좌이체");
+  document.getElementById("cardArea").classList.toggle("hidden", v !== "카드결제");
+  
+  // 필수값 처리 로직 (기존 함수 활용하시거나 폼 제출 시 체크)
+});
+
+/* 숫자만 입력 (기존 유지) */
+document.querySelectorAll(".phone-input").forEach(input=>{
+  input.addEventListener("input",()=> input.value = input.value.replace(/\D/g,""));
+});
+
+/* 폼 제출 검증 (기존 유지) */
+function validateForm() {
+    // 총액이 0인지 확인하는 로직 등 기존 로직 추가
+    let totalQty = productQuantities.reduce((a,b) => a+b, 0);
+    if(totalQty === 0) {
+        alert("상품을 1개 이상 선택해주세요.");
+        return false;
+    }
+    return true; // 테스트용
+}
+</script>
+
+</body>
+</html>
