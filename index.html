@@ -87,7 +87,7 @@
   /* 수량 및 금액 */
   .qty-price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; }
   .qty-stepper { display: inline-flex; align-items: center; gap: 8px; }
-  .qty-stepper input { width: 50px; padding: 6px 0; text-align: center; border: 1px solid #ccc; font-weight: bold; }
+  .qty-stepper input { width: 60px; padding: 6px 0; text-align: center; border: 1px solid #ccc; font-weight: bold; border-radius: 4px; }
   .qty-btn { width: 32px; height: 32px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; font-size: 16px; }
   
   .dtl-total-price { font-size: 1.3em; font-weight: 800; color: #2c3e50; }
@@ -204,14 +204,14 @@
         <p id="dtlDesc" class="dtl-desc">상품 설명이 들어갑니다.</p>
         
         <div class="option-box">
-          <label>옵션 선택</label>
+          <label id="dtlOptionLabel">옵션 선택</label>
           <select id="dtlOptionSelect">
             </select>
           
           <div class="qty-price-row">
             <div class="qty-stepper">
               <button type="button" class="qty-btn" id="dtlMinus">−</button>
-              <input type="number" id="dtlQty" min="1" value="1" readonly>
+              <input type="number" id="dtlQty" min="1" value="1">
               <button type="button" class="qty-btn" id="dtlPlus">＋</button>
             </div>
             <div class="dtl-total-price"><span id="dtlPriceCalc">0</span>원</div>
@@ -219,7 +219,7 @@
         </div>
       </div>
       
-      <button type="button" class="btn-add-cart" id="btnAddCart">이 옵션 장바구니 담기</button>
+      <button type="button" class="btn-add-cart" id="btnAddCart">장바구니 담기</button>
     </div>
   </div>
 </div>
@@ -380,6 +380,7 @@ const dtlMainImg = document.getElementById("dtlMainImg");
 const dtlThumbList = document.getElementById("dtlThumbList");
 const dtlTitle = document.getElementById("dtlTitle");
 const dtlDesc = document.getElementById("dtlDesc");
+const dtlOptionLabel = document.getElementById("dtlOptionLabel");
 const dtlOptionSelect = document.getElementById("dtlOptionSelect");
 const dtlQty = document.getElementById("dtlQty");
 const dtlPriceCalc = document.getElementById("dtlPriceCalc");
@@ -421,6 +422,15 @@ function openDetailView(item, sectionEl, cardEl) {
     dtlOptionSelect.appendChild(optEl);
   });
   
+  // [수정 포인트] 옵션이 1개뿐인 경우 (배스웨어 등) 옵션 선택 UI 숨김 처리
+  if (item.options.length <= 1) {
+    dtlOptionLabel.style.display = "none";
+    dtlOptionSelect.style.display = "none";
+  } else {
+    dtlOptionLabel.style.display = "block";
+    dtlOptionSelect.style.display = "block";
+  }
+  
   // 수량 초기화 및 가격 계산
   dtlQty.value = 1;
   updateDetailPrice();
@@ -431,19 +441,40 @@ function openDetailView(item, sectionEl, cardEl) {
   detailTemplate.style.display = "block";
 }
 
-/* 수량 및 옵션 변경 이벤트 */
+/* 수량 및 금액 변경 이벤트 */
 document.getElementById("dtlMinus").addEventListener("click", () => {
-  if (dtlQty.value > 1) { dtlQty.value = parseInt(dtlQty.value) - 1; updateDetailPrice(); }
+  let currentQty = parseInt(dtlQty.value) || 1;
+  if (currentQty > 1) { dtlQty.value = currentQty - 1; updateDetailPrice(); }
 });
 document.getElementById("dtlPlus").addEventListener("click", () => {
-  dtlQty.value = parseInt(dtlQty.value) + 1; updateDetailPrice();
+  let currentQty = parseInt(dtlQty.value) || 1;
+  dtlQty.value = currentQty + 1; updateDetailPrice();
 });
+
+// [수정 포인트] 직접 수량 입력 시 실시간 감지 및 금액 반영
+dtlQty.addEventListener("input", () => {
+  let val = parseInt(dtlQty.value);
+  if (!isNaN(val) && val >= 1) {
+    updateDetailPrice();
+  }
+});
+
+// [수정 포인트] 수량 칸에서 포커스가 벗어났을 때, 비어있거나 1 미만이면 1로 원복
+dtlQty.addEventListener("blur", () => {
+  let val = parseInt(dtlQty.value);
+  if (isNaN(val) || val < 1) {
+    dtlQty.value = 1;
+    updateDetailPrice();
+  }
+});
+
 dtlOptionSelect.addEventListener("change", updateDetailPrice);
 
 function updateDetailPrice() {
   if(!currentItemObj) return;
-  const optIdx = parseInt(dtlOptionSelect.value);
-  const qty = parseInt(dtlQty.value);
+  const optIdx = parseInt(dtlOptionSelect.value) || 0; // 옵션이 숨겨져 있어도 0번째 인덱스 적용
+  let qty = parseInt(dtlQty.value);
+  if (isNaN(qty) || qty < 1) qty = 1; // 오류 방지용 기본값 처리
   const unitPrice = currentItemObj.options[optIdx].price;
   dtlPriceCalc.innerText = (unitPrice * qty).toLocaleString();
 }
@@ -452,8 +483,10 @@ function updateDetailPrice() {
    장바구니(Cart) 로직
 ========================================================= */
 document.getElementById("btnAddCart").addEventListener("click", () => {
-  const optIdx = parseInt(dtlOptionSelect.value);
-  const qty = parseInt(dtlQty.value);
+  const optIdx = parseInt(dtlOptionSelect.value) || 0;
+  let qty = parseInt(dtlQty.value);
+  if (isNaN(qty) || qty < 1) qty = 1;
+  
   const optionObj = currentItemObj.options[optIdx];
   
   // 이미 같은 아이템, 같은 옵션이 있는지 확인
@@ -471,7 +504,13 @@ document.getElementById("btnAddCart").addEventListener("click", () => {
     });
   }
   
-  alert(`${currentItemObj.name} [${optionObj.optName}] ${qty}개가 담겼습니다.`);
+  // 단일 옵션일 때와 다중 옵션일 때 알림창 문구 다르게 처리
+  if (currentItemObj.options.length <= 1) {
+    alert(`${currentItemObj.name} ${qty}개가 담겼습니다.`);
+  } else {
+    alert(`${currentItemObj.name} [${optionObj.optName}] ${qty}개가 담겼습니다.`);
+  }
+  
   renderCart();
 });
 
@@ -490,11 +529,18 @@ function renderCart() {
   cart.forEach((c, idx) => {
     const rowPrice = c.unitPrice * c.qty;
     total += rowPrice;
+    
+    // 단일 옵션인지 판단 (데이터 기준)
+    const isSingleOption = shopData.some(cat => 
+      cat.items.some(item => item.id === c.itemId && item.options.length <= 1)
+    );
+    const optText = isSingleOption ? `수량: ${c.qty}개` : `옵션: ${c.optName} / 수량: ${c.qty}개`;
+
     html += `
       <div class="cart-item">
         <div class="cart-item-info">
           <div class="cart-item-title">${c.itemName}</div>
-          <div class="cart-item-opt">옵션: ${c.optName} / 수량: ${c.qty}개</div>
+          <div class="cart-item-opt">${optText}</div>
         </div>
         <div class="cart-item-price">${rowPrice.toLocaleString()}원</div>
         <button type="button" class="btn-delete" onclick="removeCartItem(${idx})">✖</button>
@@ -531,7 +577,13 @@ function validateForm() {
   }
   
   // 폼 전송용 텍스트 생성
-  let summaryText = cart.map(c => `- ${c.itemName} [${c.optName}] x ${c.qty}개`).join("\n");
+  let summaryText = cart.map(c => {
+    const isSingleOption = shopData.some(cat => 
+      cat.items.some(item => item.id === c.itemId && item.options.length <= 1)
+    );
+    return isSingleOption ? `- ${c.itemName} x ${c.qty}개` : `- ${c.itemName} [${c.optName}] x ${c.qty}개`;
+  }).join("\n");
+  
   document.getElementById("orderSummaryInput").value = summaryText;
 
   return confirm("현재 담으신 내역으로 주문서를 제출하시겠습니까?");
