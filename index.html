@@ -81,6 +81,15 @@
   .dtl-title { font-size: 1.4em; font-weight: 700; color: #2c3e50; margin-bottom: 8px; margin-top: 0; }
   .dtl-desc { font-size: 0.9em; color: #666; margin-bottom: 20px; line-height: 1.5; }
   
+  /* 상품 상세설명 내부 HTML 스타일 */
+  .desc-formatted { font-size: 0.95em; color: #444; line-height: 1.6; margin-bottom: 20px; }
+  .desc-formatted .desc-title { display: block; font-size: 1.15em; color: #2c3e50; margin-bottom: 8px; }
+  .desc-formatted p { margin: 0 0 15px 0; word-break: keep-all; }
+  .desc-formatted .desc-subtitle { display: block; font-size: 1.05em; color: #333; margin-bottom: 8px; }
+  .desc-formatted ul { margin: 0 0 15px 0; padding-left: 20px; }
+  .desc-formatted li { margin-bottom: 4px; }
+  .desc-formatted .desc-note { font-size: 0.85em; color: #888; margin-bottom: 0; }
+  
   .option-box { background: #f7f9fb; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee;}
   .option-box label { margin-top: 0; font-size: 0.9em; color: #444; }
   
@@ -235,7 +244,21 @@ const shopData = [
       {
         id: "s1", name: "디퓨저",
         images: ["https://via.placeholder.com/500x500/2c3e50/ffffff?text=Diffuser+Main", "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Diffuser+Sub"],
-        desc: "호텔의 시그니처 향기를 머금은 프리미엄 디퓨저입니다. (200ml 본품 + 100ml 리필)",
+        desc: `
+          <div class="desc-formatted">
+            <strong class="desc-title">향기로 전하는 품격, Mossy Wood</strong>
+            <p>그랜드 인터컨티넨탈 서울 파르나스에서 사용하는 시그니처 향으로, 은은하게 퍼지는 풍부한 아이리스 향과 세련된 우디 노트로 럭셔리한 품격을 전합니다.</p>
+        
+            <strong class="desc-subtitle">상품 구성</strong>
+            <ul>
+              <li>디퓨저 본품 200ml</li>
+              <li>리필 용액 100ml</li>
+              <li>리드 스틱 8개</li>
+            </ul>
+        
+            <p class="desc-note">* 패키지 상자와 선물 포장용 쇼핑백이 함께 제공됩니다.</p>
+          </div>
+        `,
         options: [
           { optName: "Mossy Wood", price: 76000 },
           { optName: "Mint Forest", price: 76000 },
@@ -394,7 +417,7 @@ function openDetailView(item, sectionEl, cardEl) {
 
   // 2. 텍스트 바인딩
   dtlTitle.innerText = item.name;
-  dtlDesc.innerText = item.desc;
+  dtlDesc.innerHTML = item.desc;
   
   // 3. 이미지 바인딩 (메인 & 썸네일)
   dtlMainImg.src = item.images[0];
