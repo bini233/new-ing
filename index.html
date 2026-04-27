@@ -260,8 +260,24 @@ const shopData = [
           </div>
         `,
         options: [
-          { optName: "Mossy Wood", price: 76000 },
-          { optName: "Mint Forest", price: 76000 },
+          {
+            optName: "Mossy Wood", 
+            price: 76000,
+            optDesc: `
+                  <div class="desc-formatted">
+                    <strong class="desc-title">향기로 전하는 품격, Mossy Wood</strong>
+                    <p>우디 노트로 럭셔리한 품격을 전합니다.</p>
+                    </div>
+                `
+          },
+          { optName: "Mint Forest", price: 76000,
+            optDesc: `
+                  <div class="desc-formatted">
+                    <strong class="desc-title">상쾌한 숲의 향기, Mint Forest</strong>
+                    <p>민트와 허브 향이 어우러져 청량감을 줍니다.</p>
+                    </div>
+                `
+          },
           { optName: "White Bloom", price: 76000 }
         ]
       },
@@ -498,7 +514,16 @@ function updateDetailPrice() {
   const optIdx = parseInt(dtlOptionSelect.value) || 0; // 옵션이 숨겨져 있어도 0번째 인덱스 적용
   let qty = parseInt(dtlQty.value);
   if (isNaN(qty) || qty < 1) qty = 1; // 오류 방지용 기본값 처리
-  const unitPrice = currentItemObj.options[optIdx].price;
+  const currentOption = currentItemObj.options[optIdx];
+  
+  // [추가된 부분] 현재 선택된 옵션에 'optDesc'가 있으면 그걸 띄우고, 없으면 기본 상품 'desc' 유지
+  if (currentOption.optDesc) {
+    dtlDesc.innerHTML = currentOption.optDesc;
+  } else if (currentItemObj.desc) {
+    dtlDesc.innerHTML = currentItemObj.desc;
+  }
+  
+  const unitPrice = currentOption.price;
   dtlPriceCalc.innerText = (unitPrice * qty).toLocaleString();
 }
 
