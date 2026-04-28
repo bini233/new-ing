@@ -235,7 +235,7 @@
 
 <script>
 /* =========================================================
-   데이터 정의 (품목 -> 옵션 구조로 변경)
+   데이터 정의 (기존 이미지 + 더미 이미지 추가)
 ========================================================= */
 const shopData = [
   {
@@ -243,7 +243,13 @@ const shopData = [
     items: [
       {
         id: "s1", name: "디퓨저",
-        images: ["https://via.placeholder.com/500x500/2c3e50/ffffff?text=Diffuser+Main", "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Diffuser+Sub"],
+        // ✅ 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Mossy_Wood_Diffuser.png", 
+          "./assets/Mint_Forest_Diffuser.png", 
+          "./assets/White_Bloom_Diffuser.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: `
           <div class="desc-formatted">
             <strong class="desc-title">향기로 전하는 품격, Mossy Wood</strong>
@@ -317,7 +323,13 @@ const shopData = [
       },
       {
         id: "s2", name: "캔들",
-        images: ["https://via.placeholder.com/500x500/2c3e50/ffffff?text=Candle+Main"],
+        // ✅ 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Mossy_Wood_Candle.png", 
+          "./assets/Mint_Forest_Candle.png", 
+          "./assets/White_Bloom_Candle.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: "따뜻한 빛과 함께 공간을 은은하게 채우는 향초입니다. (220g)",
         options: [
           { optName: "Mossy Wood", price: 74400,
@@ -369,7 +381,13 @@ const shopData = [
       },
       {
         id: "s3", name: "룸스프레이",
-        images: ["https://via.placeholder.com/500x500/2c3e50/ffffff?text=Roomspray"],
+        // ✅ 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Mossy_Wood_Roomspray.png", 
+          "./assets/Mint_Forest_Roomspray.png", 
+          "./assets/White_Bloom_Roomspray.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: "필요한 순간 즉각적으로 분위기를 전환시켜주는 룸스프레이입니다. (100ml)",
         options: [
           { optName: "Mossy Wood", price: 70400,
@@ -426,7 +444,13 @@ const shopData = [
     items: [
       {
         id: "b1", name: "구스다운 이불 세트",
-        images: ["https://via.placeholder.com/500x500/b0c4de/ffffff?text=Duvet+Set", "https://via.placeholder.com/500x500/f5f5f5/333?text=Detail+Cut"],
+        // ✅ 사이즈별 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Duvet_K.png", 
+          "./assets/Duvet_Q.png", 
+          "./assets/Duvet_S.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: "최고급 폴란드산 구스를 사용하여 구름처럼 포근한 숙면을 선사합니다.",
         options: [
           { optName: "킹사이즈 (King)", price: 1487500,
@@ -487,7 +511,12 @@ const shopData = [
       },
       {
         id: "b2", name: "구스다운 베개 세트",
-        images: ["https://via.placeholder.com/500x500/b0c4de/ffffff?text=Pillow+Set"],
+        // ✅ 사이즈별 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Pillow_Premium.png", 
+          "./assets/Pillow_King.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: "경추를 안정적으로 지지해주는 프리미엄 호텔 베개 세트입니다.",
         options: [
           { optName: "프리미엄 (50 x 90)", price: 391000,
@@ -530,7 +559,13 @@ const shopData = [
       },
       {
         id: "b3", name: "베드 시트",
-        images: ["https://via.placeholder.com/500x500/b0c4de/ffffff?text=Bed+Sheet"],
+        // ✅ 사이즈별 원래 이미지들 + 더미 이미지 추가
+        images: [
+          "./assets/Bed_Sheet_K.png", 
+          "./assets/Bed_Sheet_Q.png", 
+          "./assets/Bed_Sheet_S.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         desc: "최고급 순면 사틴 원단으로 제작되어 피부에 닿는 촉감이 매끄럽습니다.",
         options: [
           { optName: "킹사이즈 (King)", price: 229500,
@@ -593,7 +628,11 @@ const shopData = [
     items: [
       {
         id: "w1", name: "배스로브",
-        images: ["https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Bathrobe"],
+        // ✅ 원래 이미지 + 더미 이미지 추가
+        images: [
+          "./assets/Bathrobe.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         options: [
           { optName: "기본 세트 (Free Size, White)", price: 157250,
             optDesc: `
@@ -617,7 +656,11 @@ const shopData = [
       },
       {
         id: "w2", name: "배스타월",
-        images: ["https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Bath+Towel"],
+        // ✅ 원래 이미지 + 더미 이미지 추가
+        images: [
+          "./assets/Bathtowel.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         options: [
           { optName: "2개입 세트 (White)", price: 97750,
             optDesc: `
@@ -641,7 +684,11 @@ const shopData = [
       },
       {
         id: "w3", name: "페이스타월",
-        images: ["https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Face+Towel"],
+        // ✅ 원래 이미지 + 더미 이미지 추가
+        images: [
+          "./assets/FaceTowel.png", 
+          "https://via.placeholder.com/500x500/e4e9ef/2c3e50?text=Add+Image+Here"
+        ],
         options: [
           { optName: "3개입 세트 (White)", price: 67150,
             optDesc: `
@@ -732,7 +779,7 @@ function openDetailView(item, sectionEl, cardEl) {
 
   // 2. 텍스트 바인딩
   dtlTitle.innerText = item.name;
-  dtlDesc.innerHTML = item.desc;
+  dtlDesc.innerHTML = item.desc || item.options[0].optDesc;
   
   // 3. 이미지 바인딩 (메인 & 썸네일)
   dtlMainImg.src = item.images[0];
@@ -760,7 +807,7 @@ function openDetailView(item, sectionEl, cardEl) {
     dtlOptionSelect.appendChild(optEl);
   });
   
-  // [수정 포인트] 옵션이 1개뿐인 경우 (배스웨어 등) 옵션 선택 UI 숨김 처리
+  // 옵션이 1개뿐인 경우 (배스웨어 등) 옵션 선택 UI 숨김 처리
   if (item.options.length <= 1) {
     dtlOptionLabel.style.display = "none";
     dtlOptionSelect.style.display = "none";
@@ -789,7 +836,6 @@ document.getElementById("dtlPlus").addEventListener("click", () => {
   dtlQty.value = currentQty + 1; updateDetailPrice();
 });
 
-// [수정 포인트] 직접 수량 입력 시 실시간 감지 및 금액 반영
 dtlQty.addEventListener("input", () => {
   let val = parseInt(dtlQty.value);
   if (!isNaN(val) && val >= 1) {
@@ -797,7 +843,6 @@ dtlQty.addEventListener("input", () => {
   }
 });
 
-// [수정 포인트] 수량 칸에서 포커스가 벗어났을 때, 비어있거나 1 미만이면 1로 원복
 dtlQty.addEventListener("blur", () => {
   let val = parseInt(dtlQty.value);
   if (isNaN(val) || val < 1) {
@@ -810,12 +855,11 @@ dtlOptionSelect.addEventListener("change", updateDetailPrice);
 
 function updateDetailPrice() {
   if(!currentItemObj) return;
-  const optIdx = parseInt(dtlOptionSelect.value) || 0; // 옵션이 숨겨져 있어도 0번째 인덱스 적용
+  const optIdx = parseInt(dtlOptionSelect.value) || 0; 
   let qty = parseInt(dtlQty.value);
-  if (isNaN(qty) || qty < 1) qty = 1; // 오류 방지용 기본값 처리
+  if (isNaN(qty) || qty < 1) qty = 1; 
   const currentOption = currentItemObj.options[optIdx];
   
-  // [추가된 부분] 현재 선택된 옵션에 'optDesc'가 있으면 그걸 띄우고, 없으면 기본 상품 'desc' 유지
   if (currentOption.optDesc) {
     dtlDesc.innerHTML = currentOption.optDesc;
   } else if (currentItemObj.desc) {
@@ -836,11 +880,10 @@ document.getElementById("btnAddCart").addEventListener("click", () => {
   
   const optionObj = currentItemObj.options[optIdx];
   
-  // 이미 같은 아이템, 같은 옵션이 있는지 확인
   const existingIdx = cart.findIndex(c => c.itemId === currentItemObj.id && c.optName === optionObj.optName);
   
   if (existingIdx > -1) {
-    cart[existingIdx].qty += qty; // 있으면 수량 누적
+    cart[existingIdx].qty += qty; 
   } else {
     cart.push({
       itemId: currentItemObj.id,
@@ -851,7 +894,6 @@ document.getElementById("btnAddCart").addEventListener("click", () => {
     });
   }
   
-  // 단일 옵션일 때와 다중 옵션일 때 알림창 문구 다르게 처리
   if (currentItemObj.options.length <= 1) {
     alert(`${currentItemObj.name} ${qty}개가 담겼습니다.`);
   } else {
@@ -877,7 +919,6 @@ function renderCart() {
     const rowPrice = c.unitPrice * c.qty;
     total += rowPrice;
     
-    // 단일 옵션인지 판단 (데이터 기준)
     const isSingleOption = shopData.some(cat => 
       cat.items.some(item => item.id === c.itemId && item.options.length <= 1)
     );
@@ -923,7 +964,6 @@ function validateForm() {
     return false;
   }
   
-  // 폼 전송용 텍스트 생성
   let summaryText = cart.map(c => {
     const isSingleOption = shopData.some(cat => 
       cat.items.some(item => item.id === c.itemId && item.options.length <= 1)
